@@ -1,5 +1,6 @@
 package com.abreu.ecommerce.service;
 
+import com.abreu.ecommerce.exceptions.ProductNotFoundException;
 import com.abreu.ecommerce.model.Product;
 import com.abreu.ecommerce.model.dto.ProductRequestDTO;
 import com.abreu.ecommerce.model.dto.ProductResponseDTO;
@@ -18,6 +19,15 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    @Transactional(readOnly = true)
+    public ProductResponseDTO findProductById(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new ProductNotFoundException(String.format("id:%s not found!", id))
+        );
+        return new ProductResponseDTO(product);
+    }
+
+
     @Transactional
     public ProductResponseDTO saveProduct(ProductRequestDTO data) {
         if (data.price() <= 0) throw new RuntimeException();
@@ -25,6 +35,4 @@ public class ProductService {
         var newProduct = new Product(data);
         return new ProductResponseDTO(productRepository.save(newProduct));
     }
-
-
 }
