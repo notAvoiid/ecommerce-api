@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: ecommerce
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommercedb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
+    username: docker
+    password: docker
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
