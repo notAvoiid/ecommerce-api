@@ -32,4 +32,10 @@ public class ProductController {
     public ResponseEntity<ProductResponseDTO> saveProduct(@RequestBody ProductRequestDTO data) {
         return ResponseEntity.ok(productService.saveProduct(data));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
 }
