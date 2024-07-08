@@ -34,11 +34,11 @@ public class Product {
 
     @Column(nullable = false)
     @JsonIgnore
-    private Boolean active;
+    private boolean active;
 
     @JsonIgnore
     @OneToMany(mappedBy = "product")
-    private Set<Order> order;
+    private Set<Order> orders;
 
     public Product(ProductRequestDTO data) {
         this.name = data.name();

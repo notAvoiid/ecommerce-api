@@ -25,7 +25,7 @@ public class Order {
     private Double price;
 
     @Column(nullable = false)
-    private Boolean completed;
+    private boolean completed;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -34,4 +34,5 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "purchase_id")
     private Purchase purchase;
+
 }
