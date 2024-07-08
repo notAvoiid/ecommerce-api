@@ -11,10 +11,10 @@ public record ProductResponseDTO(
 
     public ProductResponseDTO(Product product){
         this(
-                product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice()
+            product.getId(),
+            product.getName(),
+            product.getDescription(),
+            product.getPrice()
         );
     }
 
