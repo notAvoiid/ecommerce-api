@@ -6,6 +6,8 @@ import com.abreu.ecommerce.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/product")
 public class ProductController {
@@ -19,6 +21,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findProductById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProductResponseDTO>> findAll() {
+        return ResponseEntity.ok(productService.findAllProducts());
     }
 
     @PostMapping

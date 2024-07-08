@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 public class ProductService {
@@ -27,6 +30,14 @@ public class ProductService {
         return new ProductResponseDTO(product);
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductResponseDTO> findAllProducts() {
+        var products = productRepository.findAll();
+        return products.stream()
+                .filter(Product::isActive)
+                .map(ProductResponseDTO::new)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public ProductResponseDTO saveProduct(ProductRequestDTO data) {
