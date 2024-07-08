@@ -1,5 +1,6 @@
 package com.abreu.ecommerce.model;
 
+import com.abreu.ecommerce.model.dto.ProductRequestDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class Product {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private Double price;
 
     @Column(nullable = false)
@@ -37,6 +39,13 @@ public class Product {
     @JsonIgnore
     @OneToMany(mappedBy = "product")
     private Set<Order> order;
+
+    public Product(ProductRequestDTO data) {
+        this.name = data.name();
+        this.description = data.description();
+        this.price = data.price();
+        this.active = true;
+    }
 
     @Override
     public boolean equals(Object o) {
