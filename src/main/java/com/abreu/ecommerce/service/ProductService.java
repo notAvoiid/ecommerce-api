@@ -33,12 +33,14 @@ public class ProductService {
         Product product = productRepository.findById(id).orElseThrow(
                 () -> new ProductNotFoundException(String.format("id:%s not found!", id))
         );
+        log.info("Finding a product by his ID");
         return new ProductResponseDTO(product);
     }
 
     @Transactional(readOnly = true)
     public List<ProductResponseDTO> findAllProducts() {
         var products = productRepository.findAll();
+        log.info("Finding all products");
         return products.stream()
                 .filter(Product::isActive)
                 .map(ProductResponseDTO::new)
@@ -50,6 +52,7 @@ public class ProductService {
         if (data.price() <= 0) throw new RuntimeException();
 
         var newProduct = new Product(data);
+        log.info("Saving a product");
         return new ProductResponseDTO(productRepository.save(newProduct));
     }
 
@@ -63,6 +66,7 @@ public class ProductService {
             product.setDescription(data.description());
             product.setPrice(data.price());
 
+            log.info("Updating a product");
             return new ProductResponseDTO(productRepository.save(product));
         } else {
             throw new NullPointerException();
@@ -83,6 +87,7 @@ public class ProductService {
                         });
                 product.setActive(false);
                 productRepository.save(product);
+                log.warn("A product was deleted!");
             } else {
                 orderRepository.deleteAll(product.getOrders());
                 productRepository.delete(product);
