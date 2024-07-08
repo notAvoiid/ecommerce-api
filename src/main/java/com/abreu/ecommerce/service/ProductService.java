@@ -5,6 +5,7 @@ import com.abreu.ecommerce.model.Order;
 import com.abreu.ecommerce.model.Product;
 import com.abreu.ecommerce.model.dto.ProductRequestDTO;
 import com.abreu.ecommerce.model.dto.ProductResponseDTO;
+import com.abreu.ecommerce.model.dto.ProductUpdateDTO;
 import com.abreu.ecommerce.repositories.OrderRepository;
 import com.abreu.ecommerce.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ProductService {
-    private final OrderRepository orderRepository;
 
+    private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
     public ProductService(ProductRepository productRepository, OrderRepository orderRepository) {
@@ -50,6 +51,22 @@ public class ProductService {
 
         var newProduct = new Product(data);
         return new ProductResponseDTO(productRepository.save(newProduct));
+    }
+
+    @Transactional
+    public ProductResponseDTO updateProduct(ProductUpdateDTO data) {
+        if (data.price() <= 0) throw new RuntimeException();
+        Optional<Product> optionalProduct = productRepository.findById(data.id());
+        if (optionalProduct.isPresent()) {
+            var product = optionalProduct.get();
+            product.setName(data.name());
+            product.setDescription(data.description());
+            product.setPrice(data.price());
+
+            return new ProductResponseDTO(productRepository.save(product));
+        } else {
+            throw new NullPointerException();
+        }
     }
 
     @Transactional

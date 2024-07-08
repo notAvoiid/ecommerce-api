@@ -2,6 +2,7 @@ package com.abreu.ecommerce.controller;
 
 import com.abreu.ecommerce.model.dto.ProductRequestDTO;
 import com.abreu.ecommerce.model.dto.ProductResponseDTO;
+import com.abreu.ecommerce.model.dto.ProductUpdateDTO;
 import com.abreu.ecommerce.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,11 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductResponseDTO> saveProduct(@RequestBody ProductRequestDTO data) {
         return ResponseEntity.ok(productService.saveProduct(data));
+    }
+
+    @PutMapping
+    public ResponseEntity<ProductResponseDTO> updateProduct(@RequestBody ProductUpdateDTO data) {
+        return ResponseEntity.ok(productService.updateProduct(data));
     }
 
     @DeleteMapping("/{id}")
