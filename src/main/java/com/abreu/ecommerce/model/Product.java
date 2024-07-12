@@ -1,6 +1,6 @@
 package com.abreu.ecommerce.model;
 
-import com.abreu.ecommerce.model.dto.ProductRequestDTO;
+import com.abreu.ecommerce.model.dto.product.ProductRequestDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

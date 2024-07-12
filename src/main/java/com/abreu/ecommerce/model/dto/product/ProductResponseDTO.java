@@ -1,4 +1,4 @@
-package com.abreu.ecommerce.model.dto;
+package com.abreu.ecommerce.model.dto.product;
 
 import com.abreu.ecommerce.model.Product;
 

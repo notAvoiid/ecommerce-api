@@ -1,8 +1,8 @@
 package com.abreu.ecommerce.controller;
 
-import com.abreu.ecommerce.model.dto.ProductRequestDTO;
-import com.abreu.ecommerce.model.dto.ProductResponseDTO;
-import com.abreu.ecommerce.model.dto.ProductUpdateDTO;
+import com.abreu.ecommerce.model.dto.product.ProductRequestDTO;
+import com.abreu.ecommerce.model.dto.product.ProductResponseDTO;
+import com.abreu.ecommerce.model.dto.product.ProductUpdateDTO;
 import com.abreu.ecommerce.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
