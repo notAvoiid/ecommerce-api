@@ -1,7 +1,6 @@
 package com.abreu.ecommerce.service;
 
 import com.abreu.ecommerce.model.User;
-import com.abreu.ecommerce.repositories.UserRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -17,7 +16,7 @@ import java.util.Base64;
 import java.util.Date;
 
 @Service
-public class AuthService {
+public class TokenService {
 
     @Value("${api.security.token.secret}")
     private String secretKey;

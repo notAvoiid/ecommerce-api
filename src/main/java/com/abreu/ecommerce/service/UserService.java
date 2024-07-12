@@ -11,30 +11,23 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class UserService implements UserDetailsService {
+public class UserService{
 
     private final ApplicationContext context;
     private final UserRepository userRepository;
-    private final AuthService authService;
+    private final TokenService tokenService;
     private final PasswordEncoder encoder;
 
-    public UserService(ApplicationContext context, UserRepository userRepository, AuthService authService, PasswordEncoder encoder) {
+    public UserService(ApplicationContext context, UserRepository userRepository, TokenService tokenService, PasswordEncoder encoder) {
         this.context = context;
         this.userRepository = userRepository;
-        this.authService = authService;
+        this.tokenService = tokenService;
         this.encoder = encoder;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
     }
 
     @Transactional
@@ -46,7 +39,7 @@ public class UserService implements UserDetailsService {
         AuthenticationManager authenticationManager = context.getBean(AuthenticationManager.class);
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = authenticationManager.authenticate(usernamePassword);
-        var token = authService.generateToken((User) auth.getPrincipal());
+        var token = tokenService.generateToken((User) auth.getPrincipal());
 
         log.info("An user is authenticated!");
 

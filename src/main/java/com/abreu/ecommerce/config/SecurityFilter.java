@@ -1,7 +1,7 @@
 package com.abreu.ecommerce.config;
 
 import com.abreu.ecommerce.repositories.UserRepository;
-import com.abreu.ecommerce.service.AuthService;
+import com.abreu.ecommerce.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,11 +20,11 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
-    private final AuthService authService;
+    private final TokenService tokenService;
 
-    public SecurityFilter(UserRepository userRepository, AuthService authService) {
+    public SecurityFilter(UserRepository userRepository, TokenService tokenService) {
         this.userRepository = userRepository;
-        this.authService = authService;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
 
         if (token != null) {
-            var username = authService.validateToken(token);
+            var username = tokenService.validateToken(token);
             UserDetails user = userRepository.findByUsername(username);
 
             if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
