@@ -14,6 +14,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -43,6 +44,9 @@ public class User implements UserDetails, Serializable {
     @Column(nullable = false)
     private UserRole role;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<Order> cart;
+
     public User(String name, String username, String password, UserRole role) {
         this.name = name;
         this.username = username;
@@ -54,5 +58,11 @@ public class User implements UserDetails, Serializable {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    public List<Order> getActiveCart() {
+        return cart.stream()
+                .filter(order -> !order.isCompleted())
+                .collect(Collectors.toList());
     }
 }

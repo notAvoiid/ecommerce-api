@@ -1,5 +1,6 @@
 package com.abreu.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,4 +36,16 @@ public class Order {
     @JoinColumn(name = "purchase_id")
     private Purchase purchase;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Order(Product product, Integer quantity, Double price,  User user) {
+        this.quantity = quantity;
+        this.price = price;
+        this.completed = false;
+        this.product = product;
+        this.user = user;
+    }
 }

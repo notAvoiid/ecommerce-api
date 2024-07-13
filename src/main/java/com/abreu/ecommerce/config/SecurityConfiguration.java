@@ -37,6 +37,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/product").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/product").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/product/**").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "api/v1/order/me").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/order").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

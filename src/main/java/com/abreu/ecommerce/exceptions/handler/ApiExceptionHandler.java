@@ -1,6 +1,8 @@
 package com.abreu.ecommerce.exceptions.handler;
 
 import com.abreu.ecommerce.exceptions.ErrorMessage;
+import com.abreu.ecommerce.exceptions.NullProductException;
+import com.abreu.ecommerce.exceptions.NullUserException;
 import com.abreu.ecommerce.exceptions.ProductNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler  {
             ProductNotFoundException.class,
     })
     public final ResponseEntity<ErrorMessage> handleEntityNotFoundException(
+            RuntimeException ex, HttpServletRequest request
+    ) {
+        log.error(ERROR_PREFIX, ex);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+
+    @ExceptionHandler({
+            NullProductException.class,
+            NullUserException.class,
+    })
+    public final ResponseEntity<ErrorMessage> handleNullEntity(
             RuntimeException ex, HttpServletRequest request
     ) {
         log.error(ERROR_PREFIX, ex);
