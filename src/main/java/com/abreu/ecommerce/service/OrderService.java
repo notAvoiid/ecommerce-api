@@ -1,5 +1,6 @@
 package com.abreu.ecommerce.service;
 
+import com.abreu.ecommerce.exceptions.NullOrderException;
 import com.abreu.ecommerce.exceptions.NullProductException;
 import com.abreu.ecommerce.model.Order;
 import com.abreu.ecommerce.model.Product;
@@ -66,4 +67,16 @@ public class OrderService {
             throw new RuntimeException();
     }
 
+    @Transactional
+    public void deleteFromCart(Long id) {
+        Optional<User> optionalUser = tokenService.getAuthUser();
+        optionalUser.ifPresent(user -> {
+            Optional<Order> optionalOrder = orderRepository.findById(id);
+            if(optionalOrder.isPresent() && !optionalOrder.get().isCompleted() && user.getActiveCart().contains(optionalOrder.get())) {
+                var order = optionalOrder.get();
+                orderRepository.delete(order);
+            } else
+                throw new NullOrderException("The order doesn't exist in your cart");
+        });
+    }
 }

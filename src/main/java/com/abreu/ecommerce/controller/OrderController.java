@@ -28,4 +28,10 @@ public class OrderController {
     public ResponseEntity<Set<OrderResponseDTO>> getUserCart() {
         return ResponseEntity.ok(orderService.getUserCart());
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFromCart(@PathVariable Long id) {
+        orderService.deleteFromCart(id);
+        return ResponseEntity.ok().build();
+    }
 }
