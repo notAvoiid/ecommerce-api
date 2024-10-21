@@ -2,6 +2,7 @@ package com.abreu.ecommerce.controller;
 
 import com.abreu.ecommerce.model.dto.order.OrderRequestDTO;
 import com.abreu.ecommerce.model.dto.order.OrderResponseDTO;
+import com.abreu.ecommerce.model.dto.order.OrderUpdateDTO;
 import com.abreu.ecommerce.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,12 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<Set<OrderResponseDTO>> getUserCart() {
         return ResponseEntity.ok(orderService.getUserCart());
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> updateOrder(@RequestBody OrderUpdateDTO data) {
+        orderService.updateOrder(data);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

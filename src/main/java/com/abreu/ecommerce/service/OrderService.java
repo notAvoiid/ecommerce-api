@@ -7,6 +7,7 @@ import com.abreu.ecommerce.model.Product;
 import com.abreu.ecommerce.model.User;
 import com.abreu.ecommerce.model.dto.order.OrderRequestDTO;
 import com.abreu.ecommerce.model.dto.order.OrderResponseDTO;
+import com.abreu.ecommerce.model.dto.order.OrderUpdateDTO;
 import com.abreu.ecommerce.repositories.OrderRepository;
 import com.abreu.ecommerce.repositories.ProductRepository;
 import com.abreu.ecommerce.security.TokenService;
@@ -66,6 +67,29 @@ public class OrderService {
                     .map(OrderResponseDTO::new).collect(Collectors.toSet());
         } else
             throw new RuntimeException();
+    }
+
+    public void updateOrder(OrderUpdateDTO data) {
+        Optional<User> optionalUser = tokenService.getAuthUser();
+        optionalUser.ifPresent(user -> {
+            Optional<Order> optionalOrder = orderRepository.findById(data.id());
+            Optional<Product> optionalProduct = productRepository.findById(data.productId());
+
+            if(optionalOrder.isEmpty() || !user.getActiveCart().contains(optionalOrder.get()))
+                throw new RuntimeException();
+            if(optionalProduct.isEmpty())
+                throw new NullProductException();
+            if(data.quantity() <= 0)
+                throw new RuntimeException();
+
+            Order order = optionalOrder.get();
+            Product product = optionalProduct.get();
+
+            order.setQuantity(data.quantity());
+            order.setProduct(product);
+            order.setPrice(product.getPrice() * data.quantity());
+            orderRepository.save(order);
+        });
     }
 
     @Transactional
