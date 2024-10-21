@@ -54,7 +54,7 @@ public class UserService{
     public void register(RegisterDTO data) {
         if (!validator.validate(data.CPF())) throw new RuntimeException();
         if (this.userRepository.existsByUsernameOrCPFOrEmail(data.username(), data.CPF(), data.email())) throw new RuntimeException();
-        User newUser = new User(data.name(), data.username(), data.CPF(), data.email(), encoder.encode(data.password()), data.role());
+        User newUser = new User(data.name(), data.username(), data.CPF(), data.email(), encoder.encode(data.password()));
         this.userRepository.save(newUser);
 
         log.info("Registered an user!!");

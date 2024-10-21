@@ -62,13 +62,13 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user")
     private List<Purchase> purchases;
 
-    public User(String name, String username, String CPF, String email, String password, UserRole role) {
+    public User(String name, String username, String CPF, String email, String password) {
         this.name = name;
         this.username = username;
         this.CPF = CPF;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.role = UserRole.USER;
     }
 
     @Override
