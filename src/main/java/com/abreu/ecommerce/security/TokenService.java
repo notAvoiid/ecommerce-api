@@ -1,4 +1,4 @@
-package com.abreu.ecommerce.service;
+package com.abreu.ecommerce.security;
 
 import com.abreu.ecommerce.exceptions.NullUserException;
 import com.abreu.ecommerce.model.User;

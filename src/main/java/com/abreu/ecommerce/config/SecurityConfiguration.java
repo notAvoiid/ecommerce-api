@@ -1,5 +1,6 @@
 package com.abreu.ecommerce.config;
 
+import com.abreu.ecommerce.security.SecurityFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

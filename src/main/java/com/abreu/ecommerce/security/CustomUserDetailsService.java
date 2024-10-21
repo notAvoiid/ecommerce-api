@@ -1,4 +1,4 @@
-package com.abreu.ecommerce.service;
+package com.abreu.ecommerce.security;
 
 import com.abreu.ecommerce.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

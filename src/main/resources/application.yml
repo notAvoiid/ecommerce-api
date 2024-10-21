@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/ecommercedb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
-    username: docker
-    password: docker
+    username: postgres
+    password: admin123
     driverClassName: org.postgresql.Driver
 
   jpa:

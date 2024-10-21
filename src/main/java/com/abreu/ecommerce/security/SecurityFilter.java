@@ -1,7 +1,6 @@
-package com.abreu.ecommerce.config;
+package com.abreu.ecommerce.security;
 
 import com.abreu.ecommerce.repositories.UserRepository;
-import com.abreu.ecommerce.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

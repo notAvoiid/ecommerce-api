@@ -5,6 +5,7 @@ import com.abreu.ecommerce.model.dto.user.AuthenticationDTO;
 import com.abreu.ecommerce.model.dto.user.LoginResponseDTO;
 import com.abreu.ecommerce.model.dto.user.RegisterDTO;
 import com.abreu.ecommerce.repositories.UserRepository;
+import com.abreu.ecommerce.security.TokenService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
