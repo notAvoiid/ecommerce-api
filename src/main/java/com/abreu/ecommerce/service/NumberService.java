@@ -34,7 +34,7 @@ public class NumberService {
         } else return null;
     }
 
-    public void newNumber(NumberDTO data) {
+    public void saveNumber(NumberDTO data) {
         Optional<User> optionalUser = tokenService.getAuthUser();
         optionalUser.ifPresent(user -> {
             if(user.getNumber() != null)
