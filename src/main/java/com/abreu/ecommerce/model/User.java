@@ -77,6 +77,12 @@ public class User implements UserDetails, Serializable {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
+    public Set<Address> getActiveAddresses() {
+        return addresses.stream()
+                .filter(Address::isActive)
+                .collect(Collectors.toSet());
+    }
+
     public List<Order> getActiveCart() {
         return cart.stream()
                 .filter(order -> !order.isCompleted())
