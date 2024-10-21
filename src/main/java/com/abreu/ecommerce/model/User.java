@@ -14,6 +14,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -50,8 +51,16 @@ public class User implements UserDetails, Serializable {
     @Column(nullable = false)
     private UserRole role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Number number;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<Address> addresses;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Order> cart;
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+    private Set<Product> wishlist;
+    @OneToMany(mappedBy = "user")
+    private List<Purchase> purchases;
 
     public User(String name, String username, String CPF, String email, String password, UserRole role) {
         this.name = name;
