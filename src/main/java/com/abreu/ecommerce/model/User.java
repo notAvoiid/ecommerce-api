@@ -34,8 +34,14 @@ public class User implements UserDetails, Serializable {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(nullable = false, unique = true, length = 11)
+    private String CPF;
+
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false)
     private String password;
@@ -47,9 +53,11 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Order> cart;
 
-    public User(String name, String username, String password, UserRole role) {
+    public User(String name, String username, String CPF, String email, String password, UserRole role) {
         this.name = name;
         this.username = username;
+        this.CPF = CPF;
+        this.email = email;
         this.password = password;
         this.role = role;
     }

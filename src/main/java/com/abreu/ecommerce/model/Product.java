@@ -40,6 +40,15 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private Set<Order> orders;
 
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "wishlist",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> users;
+
+
     public Product(ProductRequestDTO data) {
         this.name = data.name();
         this.description = data.description();

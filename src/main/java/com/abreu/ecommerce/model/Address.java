@@ -47,4 +47,20 @@ public class Address {
     @JsonIgnore
     private Set<Purchase> purchases;
 
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Address(String zipCode, String number, String street, String neighborhood, String city, String state, User user) {
+        this.zipCode = zipCode;
+        this.number = number;
+        this.street = street;
+        this.neighborhood = neighborhood;
+        this.city = city;
+        this.state = state;
+        this.active = true;
+        this.user = user;
+    }
+
 }
