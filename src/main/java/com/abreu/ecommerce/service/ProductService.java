@@ -48,16 +48,16 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDTO saveProduct(ProductRequestDTO data) {
+    public void saveProduct(ProductRequestDTO data) {
         if (data.price() <= 0) throw new RuntimeException();
 
         var newProduct = new Product(data);
+        productRepository.save(newProduct);
         log.info("Saving a product");
-        return new ProductResponseDTO(productRepository.save(newProduct));
     }
 
     @Transactional
-    public ProductResponseDTO updateProduct(ProductUpdateDTO data) {
+    public void updateProduct(ProductUpdateDTO data) {
         if (data.price() <= 0) throw new RuntimeException();
         Optional<Product> optionalProduct = productRepository.findById(data.id());
         if (optionalProduct.isPresent()) {
@@ -66,8 +66,8 @@ public class ProductService {
             product.setDescription(data.description());
             product.setPrice(data.price());
 
+            productRepository.save(product);
             log.info("Updating a product");
-            return new ProductResponseDTO(productRepository.save(product));
         } else {
             throw new NullPointerException();
         }

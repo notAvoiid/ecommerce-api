@@ -31,12 +31,14 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductResponseDTO> saveProduct(@RequestBody ProductRequestDTO data) {
-        return ResponseEntity.ok(productService.saveProduct(data));
+        productService.saveProduct(data);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping
     public ResponseEntity<ProductResponseDTO> updateProduct(@RequestBody ProductUpdateDTO data) {
-        return ResponseEntity.ok(productService.updateProduct(data));
+        productService.updateProduct(data);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
