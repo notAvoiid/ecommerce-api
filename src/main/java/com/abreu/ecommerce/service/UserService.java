@@ -6,6 +6,7 @@ import com.abreu.ecommerce.model.dto.user.LoginResponseDTO;
 import com.abreu.ecommerce.model.dto.user.RegisterDTO;
 import com.abreu.ecommerce.repositories.UserRepository;
 import com.abreu.ecommerce.security.TokenService;
+import com.abreu.ecommerce.service.utils.CPFValidator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -23,12 +24,14 @@ public class UserService{
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final PasswordEncoder encoder;
+    private final CPFValidator validator;
 
-    public UserService(ApplicationContext context, UserRepository userRepository, TokenService tokenService, PasswordEncoder encoder) {
+    public UserService(ApplicationContext context, UserRepository userRepository, TokenService tokenService, PasswordEncoder encoder, CPFValidator validator) {
         this.context = context;
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.encoder = encoder;
+        this.validator = validator;
     }
 
     @Transactional
@@ -49,6 +52,7 @@ public class UserService{
 
     @Transactional
     public void register(RegisterDTO data) {
+        if (!validator.validate(data.CPF())) throw new RuntimeException();
         if (this.userRepository.existsByUsernameOrCPFOrEmail(data.username(), data.CPF(), data.email())) throw new RuntimeException();
         User newUser = new User(data.name(), data.username(), data.CPF(), data.email(), encoder.encode(data.password()), data.role());
         this.userRepository.save(newUser);
