@@ -49,13 +49,11 @@ public class UserService{
 
     @Transactional
     public void register(RegisterDTO data) {
-
-        if (this.userRepository.existsByUsername(data.username())) throw new RuntimeException();
-        User newUser = new User(data.name(), data.username(), encoder.encode(data.password()), data.role());
+        if (this.userRepository.existsByUsernameOrCPFOrEmail(data.username(), data.CPF(), data.email())) throw new RuntimeException();
+        User newUser = new User(data.name(), data.username(), data.CPF(), data.email(), encoder.encode(data.password()), data.role());
         this.userRepository.save(newUser);
 
         log.info("Registered an user!!");
-
     }
 
 }
