@@ -1,19 +1,23 @@
 package com.abreu.ecommerce.service;
 
+import com.abreu.ecommerce.exceptions.NullProductException;
 import com.abreu.ecommerce.exceptions.ProductNotFoundException;
 import com.abreu.ecommerce.model.Order;
 import com.abreu.ecommerce.model.Product;
+import com.abreu.ecommerce.model.User;
 import com.abreu.ecommerce.model.dto.product.ProductRequestDTO;
 import com.abreu.ecommerce.model.dto.product.ProductResponseDTO;
 import com.abreu.ecommerce.model.dto.product.ProductUpdateDTO;
 import com.abreu.ecommerce.repositories.OrderRepository;
 import com.abreu.ecommerce.repositories.ProductRepository;
+import com.abreu.ecommerce.security.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,10 +26,12 @@ public class ProductService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final TokenService tokenService;
 
-    public ProductService(ProductRepository productRepository, OrderRepository orderRepository) {
+    public ProductService(ProductRepository productRepository, OrderRepository orderRepository, TokenService tokenService) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
+        this.tokenService = tokenService;
     }
 
     @Transactional(readOnly = true)
@@ -95,6 +101,53 @@ public class ProductService {
         } else {
             throw new NullPointerException();
         }
+    }
+
+    public Set<ProductResponseDTO> getUserWishlist() {
+        Optional<User> optionalUser = tokenService.getAuthUser();
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return user.getWishlist().stream()
+                    .map(ProductResponseDTO::new).collect(Collectors.toSet());
+        } else
+            return null;
+    }
+
+    public void favorite(Long id) {
+        Optional<User> optionalUser = tokenService.getAuthUser();
+        optionalUser.ifPresent(user -> {
+            Optional<Product> optionalProduct = productRepository.findById(id);
+            if(optionalProduct.isPresent() && optionalProduct.get().isActive()) {
+                var product = optionalProduct.get();
+                Set<Product> wishlist = user.getWishlist();
+                Set<User> userList = product.getUsers();
+                if(!wishlist.contains(product)) {
+                    wishlist.add(product);
+                    userList.add(user);
+                    productRepository.save(product);
+                } else
+                    throw new RuntimeException("The product was already favorited!");
+            } else
+                throw new NullProductException();
+        });
+    }
+    public void unfavorite(Long id) {
+        Optional<User> optionalUser = tokenService.getAuthUser();
+        optionalUser.ifPresent(user -> {
+            Optional<Product> optionalProduct = productRepository.findById(id);
+            if(optionalProduct.isPresent() && optionalProduct.get().isActive()) {
+                var product = optionalProduct.get();
+                Set<Product> wishlist = user.getWishlist();
+                Set<User> userList = product.getUsers();
+                if(wishlist.contains(product)) {
+                    wishlist.remove(product);
+                    userList.remove(user);
+                    productRepository.save(product);
+                } else
+                    throw new RuntimeException("The product hasn't been favorited yet!");
+            } else
+                throw new NullProductException();
+        });
     }
 
 }

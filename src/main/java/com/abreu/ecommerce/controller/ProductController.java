@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -45,5 +46,22 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/wishlist/me")
+    public ResponseEntity<Set<ProductResponseDTO>> getUserWishlist() {
+        var userWishlist = productService.getUserWishlist();
+        return ResponseEntity.ok(userWishlist);
+    }
+
+    @PostMapping("/wishlist/{id}")
+    public ResponseEntity<String> favorite(@PathVariable Long id) {
+        productService.favorite(id);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/wishlist/{id}")
+    public ResponseEntity<Void> unfavorite(@PathVariable Long id) {
+        productService.unfavorite(id);
+        return ResponseEntity.ok().build();
     }
 }
