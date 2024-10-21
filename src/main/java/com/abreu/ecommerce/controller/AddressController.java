@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/address")
+@RequestMapping("/api/v1/address")
 public class AddressController {
 
     private final AddressService addressService;
@@ -20,25 +20,25 @@ public class AddressController {
         this.addressService = addressService;
     }
 
-    @GetMapping
-    public ResponseEntity<Set<AddressResponseDTO>> findUserNumber() {
+    @GetMapping("/me")
+    public ResponseEntity<Set<AddressResponseDTO>> findUserAddress() {
         return ResponseEntity.ok(addressService.findUserAddresses());
     }
 
     @PostMapping
-    public ResponseEntity<Void> saveNumber(@RequestBody AddressRequestDTO data) {
+    public ResponseEntity<Void> saveAddress(@RequestBody AddressRequestDTO data) {
         addressService.saveAddress(data);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping
-    public ResponseEntity<Void> updateNumber(@RequestBody AddressUpdateDTO data) {
+    public ResponseEntity<Void> updateAddress(@RequestBody AddressUpdateDTO data) {
         addressService.updateAddress(data);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNumber(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAddress(@PathVariable Long id) {
         addressService.deleteAddress(id);
         return ResponseEntity.noContent().build();
     }

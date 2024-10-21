@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/number")
+@RequestMapping("/api/v1/number")
 public class NumberController {
 
     private final NumberService numberService;
