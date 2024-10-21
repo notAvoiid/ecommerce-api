@@ -34,13 +34,11 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/product/**", "/api/v1/product").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/product").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/product").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/product/**").authenticated()
 
-                        .requestMatchers(HttpMethod.GET, "api/v1/order/me").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/order").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").authenticated()
 
                         .anyRequest().authenticated()
                 )
