@@ -1,25 +1,35 @@
-version: '3.9'
-
 services:
   db:
-    container_name: ecommerce-db
     image: postgres:latest
     restart: always
-    shm_size: 128mb
     ports:
       - '5432:5432'
     environment:
-      - POSTGRES_PASSWORD=docker
-      - POSTGRES_USER=docker
-      - POSTGRES_DB=ecommercedb
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 256M
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_DATABASE}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d ${DB_DATABASE} -U ${DB_USER}" ]
+      timeout: 5s
+      interval: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - ecommerce-net
+
+  api:
+    image: avoiid/ecommerce:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: ${DB_DATABASE_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SECRET_TOKEN: ${SECRET_TOKEN}
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - ecommerce-net
 
