@@ -1,5 +1,6 @@
 package com.abreu.ecommerce.model;
 
+import com.abreu.ecommerce.model.enums.OrderStatus;
 import com.abreu.ecommerce.model.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "users")
+@Table(name = "tb_users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -56,7 +57,7 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Address> addresses;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Order> cart;
+    private List<Cart> cart;
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Product> wishlist;
     @OneToMany(mappedBy = "user")
@@ -83,9 +84,29 @@ public class User implements UserDetails, Serializable {
                 .collect(Collectors.toSet());
     }
 
-    public List<Order> getActiveCart() {
+    public List<Cart> getActiveCart() {
         return cart.stream()
-                .filter(order -> !order.isCompleted())
+                .filter(cart -> !cart.isCompleted())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 }

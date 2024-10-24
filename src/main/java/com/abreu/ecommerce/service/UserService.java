@@ -9,45 +9,44 @@ import com.abreu.ecommerce.security.TokenService;
 import com.abreu.ecommerce.service.utils.CPFValidator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
 public class UserService{
 
-    private final ApplicationContext context;
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final PasswordEncoder encoder;
     private final CPFValidator validator;
+    private final AuthenticationManager authenticationManager;
 
-    public UserService(ApplicationContext context, UserRepository userRepository, TokenService tokenService, PasswordEncoder encoder, CPFValidator validator) {
-        this.context = context;
+    public UserService(UserRepository userRepository, TokenService tokenService, PasswordEncoder encoder, CPFValidator validator, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.encoder = encoder;
         this.validator = validator;
+        this.authenticationManager = authenticationManager;
     }
 
     @Transactional
     public LoginResponseDTO login(AuthenticationDTO data) {
 
-        UserDetails user = userRepository.findByUsername(data.username());
-        if (user == null || !encoder.matches(data.password(), user.getPassword())) throw new RuntimeException();
+        Optional<User> user = userRepository.findByUsername(data.username());
+        if (user.isEmpty() || !encoder.matches(data.password(), user.get().getPassword())) throw new RuntimeException();
 
-        AuthenticationManager authenticationManager = context.getBean(AuthenticationManager.class);
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
 
-        log.info("An user is authenticated!");
+        log.info("User: {} is authenticated!", auth.getName());
 
-        return new LoginResponseDTO(auth.getName(), token);
+        return new LoginResponseDTO(auth.getName(), token, tokenService.getExpirationDateFromToken(token).toString());
     }
 
     @Transactional

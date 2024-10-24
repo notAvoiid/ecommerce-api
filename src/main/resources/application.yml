@@ -1,11 +1,9 @@
 spring:
-  application:
-    name: ecommerce
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/ecommercedb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
-    username: postgres
-    password: admin123
+    url: ${MY_DB_DATABASE}
+    username: ${MY_DB_USERNAME}
+    password: ${MY_DB_PASSWORD}
     driverClassName: org.postgresql.Driver
 
   jpa:
@@ -18,4 +16,4 @@ spring:
 api:
   security:
     token:
-      secret: ${TOKEN_SECRET}
+      secret: ${SECRET_TOKEN}

@@ -2,13 +2,13 @@ package com.abreu.ecommerce.service;
 
 import com.abreu.ecommerce.exceptions.NullProductException;
 import com.abreu.ecommerce.exceptions.ProductNotFoundException;
-import com.abreu.ecommerce.model.Order;
+import com.abreu.ecommerce.model.Cart;
 import com.abreu.ecommerce.model.Product;
 import com.abreu.ecommerce.model.User;
 import com.abreu.ecommerce.model.dto.product.ProductRequestDTO;
 import com.abreu.ecommerce.model.dto.product.ProductResponseDTO;
 import com.abreu.ecommerce.model.dto.product.ProductUpdateDTO;
-import com.abreu.ecommerce.repositories.OrderRepository;
+import com.abreu.ecommerce.repositories.CartRepository;
 import com.abreu.ecommerce.repositories.ProductRepository;
 import com.abreu.ecommerce.security.TokenService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProductService {
 
-    private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final TokenService tokenService;
 
-    public ProductService(ProductRepository productRepository, OrderRepository orderRepository, TokenService tokenService) {
+    public ProductService(ProductRepository productRepository, CartRepository cartRepository, TokenService tokenService) {
         this.productRepository = productRepository;
-        this.orderRepository = orderRepository;
+        this.cartRepository = cartRepository;
         this.tokenService = tokenService;
     }
 
@@ -84,18 +84,18 @@ public class ProductService {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent() && optionalProduct.get().isActive()) {
             Product product = optionalProduct.get();
-            if (product.getOrders().stream().anyMatch(Order::isCompleted)) {
-                product.getOrders().stream()
+            if (product.getCarts().stream().anyMatch(Cart::isCompleted)) {
+                product.getCarts().stream()
                         .filter(order -> !order.isCompleted())
                         .forEach(order -> {
-                            orderRepository.delete(order);
-                            product.getOrders().remove(order);
+                            cartRepository.delete(order);
+                            product.getCarts().remove(order);
                         });
                 product.setActive(false);
                 productRepository.save(product);
                 log.warn("A product was deleted!");
             } else {
-                orderRepository.deleteAll(product.getOrders());
+                cartRepository.deleteAll(product.getCarts());
                 productRepository.delete(product);
             }
         } else {

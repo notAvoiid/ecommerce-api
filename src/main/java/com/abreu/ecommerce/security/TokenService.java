@@ -7,7 +7,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,51 +25,74 @@ import java.util.Optional;
 @Service
 public class TokenService {
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Value("${api.security.token.secret}")
     private String secretKey;
     private Algorithm algorithm;
-    private Date now;
 
-    private final UserRepository userRepository;
-
-    public TokenService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         algorithm = Algorithm.HMAC256(secretKey.getBytes());
-        now = new Date();
     }
 
     public String generateToken(User data) {
         try {
             return JWT.create()
-                    .withClaim("role", String.valueOf(data.getRole()))
+                    .withClaim("role", data.getRole().toString())
                     .withIssuer("ecommerce")
                     .withSubject(data.getUsername())
-                    .withIssuedAt(now)
-                    .withExpiresAt(getExpirationDate())
-                    .sign(algorithm)
-                    .strip();
+                    .withIssuedAt(new Date().toInstant())
+                    .withExpiresAt(Date.from(getExpirationDate()))
+                    .sign(algorithm);
         } catch (JWTCreationException ex) {
             throw new JWTCreationException("Error while generating token. Try again later!", ex);
         }
     }
 
-    public String validateToken(String token) {
+    public boolean validateToken(String token) {
         try {
             algorithm = Algorithm.HMAC256(secretKey.getBytes());
-            return JWT.require(algorithm)
+            JWT.require(algorithm)
                     .withIssuer("ecommerce")
                     .build()
-                    .verify(token)
-                    .getSubject()
-                    .strip();
+                    .verify(token);
+            return true;
         } catch (JWTVerificationException ex) {
-            return "";
+            return false;
         }
+    }
+
+    public String getUsernameFromToken(String token) {
+        return JWT.require(algorithm)
+                .withIssuer("ecommerce")
+                .build()
+                .verify(token)
+                .getSubject();
+    }
+
+    public String getRoleFromToken(String token) {
+        try {
+            DecodedJWT jwt = JWT.require(algorithm)
+                    .withIssuer("ecommerce")
+                    .build()
+                    .verify(token);
+            return jwt.getClaim("role").asString();
+        } catch (JWTVerificationException ex) {
+            throw new JWTVerificationException("Token verification failed. Please authenticate again.", ex);
+        }
+    }
+
+    public Instant getExpirationDateFromToken(String token) {
+        return JWT.require(algorithm)
+                .withIssuer("ecommerce")
+                .build()
+                .verify(token)
+                .getExpiresAt()
+                .toInstant();
     }
 
     public Optional<User> getAuthUser() {

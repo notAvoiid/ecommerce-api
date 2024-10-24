@@ -1,13 +1,13 @@
 package com.abreu.ecommerce.service;
 
 import com.abreu.ecommerce.model.Address;
-import com.abreu.ecommerce.model.Order;
+import com.abreu.ecommerce.model.Cart;
 import com.abreu.ecommerce.model.Purchase;
 import com.abreu.ecommerce.model.User;
 import com.abreu.ecommerce.model.dto.purchase.PurchaseRequestDTO;
 import com.abreu.ecommerce.model.dto.purchase.PurchaseResponseDTO;
 import com.abreu.ecommerce.repositories.AddressRepository;
-import com.abreu.ecommerce.repositories.OrderRepository;
+import com.abreu.ecommerce.repositories.CartRepository;
 import com.abreu.ecommerce.repositories.PurchaseRepository;
 import com.abreu.ecommerce.security.TokenService;
 import org.springframework.stereotype.Service;
@@ -22,13 +22,13 @@ import java.util.stream.Collectors;
 public class PurchaseService {
 
     private final PurchaseRepository purchaseRepository;
-    private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
     private final AddressRepository addressRepository;
     private final TokenService tokenService;
 
-    public PurchaseService(PurchaseRepository purchaseRepository, OrderRepository orderRepository, AddressRepository addressRepository, TokenService tokenService) {
+    public PurchaseService(PurchaseRepository purchaseRepository, CartRepository cartRepository, AddressRepository addressRepository, TokenService tokenService) {
         this.purchaseRepository = purchaseRepository;
-        this.orderRepository = orderRepository;
+        this.cartRepository = cartRepository;
         this.addressRepository = addressRepository;
         this.tokenService = tokenService;
     }
@@ -39,7 +39,7 @@ public class PurchaseService {
                 .map(purchase -> new PurchaseResponseDTO(
                         purchase.getId(),
                         purchase.getTotalPrice(),
-                        purchase.getOrders(),
+                        purchase.getCarts(),
                         purchase.getAddress()
                 ))
                 .collect(Collectors.toSet());
@@ -53,7 +53,7 @@ public class PurchaseService {
                     .map(purchase -> new PurchaseResponseDTO(
                             purchase.getId(),
                             purchase.getTotalPrice(),
-                            purchase.getOrders(),
+                            purchase.getCarts(),
                             purchase.getAddress()
                     ))
                     .collect(Collectors.toSet());
@@ -69,13 +69,13 @@ public class PurchaseService {
                 throw new RuntimeException();
 
             double totalPrice = 0D;
-            Set<Order> orderList = new HashSet<>();
+            Set<Cart> orderList = new HashSet<>();
             for (Long id : data.orderIdSet()) {
-                Optional<Order> optionalOrder = orderRepository.findById(id);
+                Optional<Cart> optionalOrder = cartRepository.findById(id);
                 if(optionalOrder.isEmpty() || !user.getCart().contains(optionalOrder.get()))
                     throw new RuntimeException("The order doesn't exist in your cart!");
                 else {
-                    Order order = optionalOrder.get();
+                    Cart order = optionalOrder.get();
                     totalPrice += order.getPrice();
                     order.setCompleted(true);
                     orderList.add(order);

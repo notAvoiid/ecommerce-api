@@ -1,6 +1,7 @@
 package com.abreu.ecommerce.config;
 
 import com.abreu.ecommerce.security.SecurityFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,11 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    private final SecurityFilter securityFilter;
-
-    public SecurityConfiguration(SecurityFilter securityFilter) {
-        this.securityFilter = securityFilter;
-    }
+    @Autowired
+    private SecurityFilter securityFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

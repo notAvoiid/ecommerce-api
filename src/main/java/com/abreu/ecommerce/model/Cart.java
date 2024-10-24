@@ -7,40 +7,45 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
 @Entity
-@Table(name = "tb_purchases")
+@Table(name = "tb_cart")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Purchase {
+public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private Double totalPrice;
+    private Integer quantity;
 
-    @OneToMany(mappedBy = "purchase")
     @Column(nullable = false)
-    private Set<Cart> carts;
+    private Double price;
+
+    @Column(nullable = false)
+    private boolean completed;
 
     @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "purchase_id")
+    private Purchase purchase;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Purchase(Set<Cart> carts, Double totalPrice, Address address, User user) {
-        this.carts = carts;
-        this.address = address;
+    public Cart(Product product, Integer quantity, Double price, User user) {
+        this.quantity = quantity;
+        this.price = price;
+        this.completed = false;
+        this.product = product;
         this.user = user;
-        this.totalPrice = totalPrice;
     }
 }
